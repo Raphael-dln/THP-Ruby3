@@ -16,27 +16,53 @@ def my_hash
 end
 
 def biggest_crypto_value
-  #crypto_value = my_hash.max_by{|k,v| v == my_hash}
+  puts "-" * 50 
+  # group_by pour regrouper toutes les valeurs identiques lorsqu'une fonction est appliquée 
+  # 
   crypto_value = my_hash.group_by{|k, v| v}.max_by{|k, v| k}.last.to_h
   puts "La crypto avec la plus grosse valeur est #{crypto_value}"
 end
 
 def smallest_crypto_value
-    # crypto_value = my_hash.min_by{|k,v| v}
+    puts "-" * 50 
+    # group_by permet d'avoir TOUTES les valeurs, min_by cherchent les min, to_h les mets dans un hash (plus clean à la vue)
     crypto_value = my_hash.group_by{|k, v| v}.min_by{|k, v| k}.last.to_h
     puts "La crypto avec la plus petite valeur est #{crypto_value}"
 end
 
 def contain_coin
-    coin_number = creation_my_hash.include?("coin")
-    #select + regext k
+    puts "-" * 50 
+    #transforme toutes les valeurs du hash en minuscules
+    low_case_hash = my_hash.transform_keys!(&:downcase)
+    #dans le hash minuscule, on passe k en string, et on cherche toutes les fois où il y a "coin"
+    coin_number = low_case_hash.count{|k, v| k.to_s.include?("coin")}
+    puts "Il y a #{coin_number} cryptos contenant le mot coin"
+end
 
-    puts "Il y a #{coin_number} de crypto contenant le mot coin"
+
+def thousand
+    puts "-" * 50 
+    # under6 = my_hash.map{|k, v| if v<6000} 
+    under6 = my_hash.select { |k, v|  v <6000 }
+    number600 = under6.count
+    puts "Il y a  #{number600} cryptocurrencies dont la valeur est inférieur à 6000 €"
+    puts "-" * 30
+    puts "Voici la liste : #{under6}"
+end
+
+def biggest_thousand
+    puts "-" * 50 
+    under6 = my_hash.select { |k, v|  v <6000 }
+    crypto_value = under6.group_by{|k, v| v}.max_by{|k, v| k}.last.to_h
+    puts "#{crypto_value} est la crytpo la plus élevée dans celles inférieures à 6000"
 end
 
 def perform
   biggest_crypto_value
   smallest_crypto_value
+  contain_coin
+  thousand
+  biggest_thousand
 end
 
 perform
